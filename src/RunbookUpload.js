@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 
 function RunbookUpload({ onRunbookLoaded, runbookLoaded, runbookName }) {
-  const [mode, setMode] = useState(null); // 'paste' or null
+  const [mode, setMode] = useState(null);
   const [text, setText] = useState('');
 
-  const handlePaste = () => {
+  const handleLoad = () => {
     if (!text.trim()) return;
-    onRunbookLoaded(text, 'Pasted Runbook');
+    onRunbookLoaded(text, 'Runbook');
     setMode(null);
   };
 
   if (runbookLoaded) {
     return (
       <div className="runbook-upload">
-        <span className="upload-label loaded">✅ {runbookName}</span>
+        <span className="upload-label loaded">✅ Runbook Loaded</span>
       </div>
     );
   }
@@ -28,7 +28,7 @@ function RunbookUpload({ onRunbookLoaded, runbookLoaded, runbookName }) {
           className="runbook-textarea"
         />
         <div style={{ display: 'flex', gap: '8px' }}>
-          <button className="btn-primary" onClick={handlePaste}>
+          <button className="btn-primary" onClick={handleLoad}>
             ✅ Load Runbook
           </button>
           <button className="btn-secondary" onClick={() => setMode(null)}>
