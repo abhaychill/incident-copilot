@@ -3,12 +3,19 @@ import KeyEntry from './KeyEntry';
 import RunbookPanel from './RunbookPanel';
 import CommsPanel from './CommsPanel';
 import RunbookUpload from './RunbookUpload';
+import ReportModal from './ReportModal';
+import { generateReport } from './api';
 
 function App() {
   const [apiKey, setApiKey] = useState('');
   const [incident, setIncident] = useState(null);
   const [runbookText, setRunbookText] = useState('');
   const [runbookName, setRunbookName] = useState('');
+  const [chatHistory, setChatHistory] = useState([]);
+  const [showReport, setShowReport] = useState(false);
+  const [report, setReport] = useState('');
+  const [reportLoading, setReportLoading] = useState(false);
+  const [resolved, setResolved] = useState(false);
   const [form, setForm] = useState({
     title: '',
     severity: 'SEV1',
@@ -24,6 +31,23 @@ function App() {
   const handleSubmit = () => {
     if (!form.title || !form.description) return;
     setIncident({ ...form, startTime: new Date().toLocaleTimeString() });
+    setResolved(false);
+    setReport('');
+    setChatHistory([]);
+  };
+
+  const handleResolve = async () => {
+    setResolved(true);
+    setShowReport(true);
+    setReportLoading(true);
+    try {
+      const text = await generateReport(incident, chatHistory, apiKey);
+      setReport(text);
+    } catch (err) {
+      setReport(`Error generating report: ${err.message}`);
+    } finally {
+      setReportLoading(false);
+    }
   };
 
   if (!apiKey) {
@@ -91,14 +115,15 @@ function App() {
             <RunbookUpload
               onRunbookLoaded={handleRunbookLoaded}
               runbookLoaded={!!runbookText}
+              runbookName={runbookName}
             />
           </div>
         </div>
 
         {incident && (
           <div className="status-bar">
-            <div className="status-dot" />
-            <span><strong>ACTIVE INCIDENT:</strong> {incident.title}</span>
+            <div className={`status-dot ${resolved ? 'resolved' : ''}`} />
+            <span><strong>{resolved ? 'RESOLVED:' : 'ACTIVE INCIDENT:'}</strong> {incident.title}</span>
             <span>|</span>
             <span className={`severity-${incident.severity.toLowerCase()}`}>{incident.severity}</span>
             <span>|</span>
@@ -106,14 +131,39 @@ function App() {
             <span>|</span>
             <span>Started: {incident.startTime}</span>
             {runbookText && <><span>|</span><span>📎 RAG Active</span></>}
+            <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
+              {!resolved && (
+                <button className="btn-resolve" onClick={handleResolve}>
+                  ✅ Resolve & Generate PIR
+                </button>
+              )}
+              {resolved && report && (
+                <button className="btn-secondary btn-small" onClick={() => setShowReport(true)}>
+                  📄 View PIR
+                </button>
+              )}
+            </div>
           </div>
         )}
 
         <div className="panels">
-          <RunbookPanel incident={incident} apiKey={apiKey} runbookText={runbookText} />
+          <RunbookPanel
+            incident={incident}
+            apiKey={apiKey}
+            runbookText={runbookText}
+            onChatUpdate={setChatHistory}
+          />
           <CommsPanel incident={incident} apiKey={apiKey} />
         </div>
       </main>
+
+      {showReport && (
+        <ReportModal
+          report={report}
+          loading={reportLoading}
+          onClose={() => setShowReport(false)}
+        />
+      )}
     </div>
   );
 }

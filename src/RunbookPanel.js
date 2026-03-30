@@ -2,27 +2,32 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { chatWithRunbook } from './api';
 
-function RunbookPanel({ incident, apiKey, runbookText }) {
+function RunbookPanel({ incident, apiKey, runbookText, onChatUpdate }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef(null);
 
+  const updateMessages = (newMessages) => {
+    setMessages(newMessages);
+    if (onChatUpdate) onChatUpdate(newMessages);
+  };
+
   useEffect(() => {
     if (!incident) return;
-    setMessages([]);
+    updateMessages([]);
     setLoading(true);
     const initial = [{ role: 'user', content: 'The incident has just been logged. What are the first steps I should take right now?' }];
     chatWithRunbook(incident, initial, apiKey, runbookText)
       .then(text => {
-        setMessages([
+        updateMessages([
           { role: 'user', content: 'The incident has just been logged. What are the first steps I should take right now?' },
           { role: 'assistant', content: text }
         ]);
       })
-      .catch(err => setMessages([{ role: 'assistant', content: `Error: ${err.message}` }]))
+      .catch(err => updateMessages([{ role: 'assistant', content: `Error: ${err.message}` }]))
       .finally(() => setLoading(false));
-}, [incident, apiKey, runbookText]);
+  }, [incident, apiKey, runbookText]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -32,14 +37,14 @@ function RunbookPanel({ incident, apiKey, runbookText }) {
     if (!input.trim() || loading) return;
     const userMsg = { role: 'user', content: input };
     const updated = [...messages, userMsg];
-    setMessages(updated);
+    updateMessages(updated);
     setInput('');
     setLoading(true);
     try {
       const reply = await chatWithRunbook(incident, updated, apiKey, runbookText);
-      setMessages([...updated, { role: 'assistant', content: reply }]);
+      updateMessages([...updated, { role: 'assistant', content: reply }]);
     } catch (err) {
-      setMessages([...updated, { role: 'assistant', content: `Error: ${err.message}` }]);
+      updateMessages([...updated, { role: 'assistant', content: `Error: ${err.message}` }]);
     } finally {
       setLoading(false);
     }
@@ -50,7 +55,7 @@ function RunbookPanel({ incident, apiKey, runbookText }) {
       <div className="panel-header">
         <span className="panel-icon">📋</span>
         <h2>Runbook Assistant</h2>
-        {runbookText && <span className="badge badge-green" style={{fontSize:'10px'}}>RAG ON</span>}
+        {runbookText && <span className="badge badge-green" style={{ fontSize: '10px' }}>RAG ON</span>}
       </div>
       <div className="panel-body">
         {!incident && (

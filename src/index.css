@@ -499,3 +499,107 @@ h1, h2, h3 {
   color: #16a34a;
   border-color: #16a34a;
 }
+.btn-resolve {
+  background-color: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.btn-resolve:hover {
+  background-color: #15803d;
+}
+
+.btn-small {
+  padding: 8px 14px;
+  font-size: 13px;
+}
+
+.status-dot.resolved {
+  background-color: #16a34a;
+  animation: none;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 32px;
+}
+
+.modal-card {
+  background-color: #1a1d27;
+  border: 1px solid #2e3147;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 780px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #2e3147;
+}
+
+.modal-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.report-content {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #cbd5e0;
+}
+
+.report-content h2 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 20px 0 8px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #2e3147;
+}
+
+.report-content h2:first-child {
+  margin-top: 0;
+}
+
+.report-content p {
+  margin-bottom: 10px;
+}
+
+.report-content ul, .report-content ol {
+  padding-left: 20px;
+  margin-bottom: 10px;
+}
+
+.report-content li {
+  margin-bottom: 4px;
+}

@@ -110,3 +110,67 @@ Active Incident Context:
   if (data.error) throw new Error(data.error.message);
   return data.content[0].text;
 }
+export async function generateReport(incident, chatHistory, apiKey) {
+  const chatSummary = chatHistory
+    .filter(m => m.role === 'assistant')
+    .map(m => m.content)
+    .join('\n\n');
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-opus-4-5',
+      max_tokens: 2000,
+      messages: [
+        {
+          role: 'user',
+          content: `You are a senior incident response engineer writing a formal Post-Incident Review (PIR) for a financial services firm.
+
+Incident Details:
+- Title: ${incident.title}
+- Severity: ${incident.severity}
+- Affected System: ${incident.system || 'Unspecified'}
+- Description: ${incident.description}
+- Start Time: ${incident.startTime}
+- End Time: ${new Date().toLocaleTimeString()}
+
+Response Actions Taken (from runbook assistant chat):
+${chatSummary || 'No runbook guidance was recorded.'}
+
+Write a formal Post-Incident Review using exactly this structure:
+
+## 📋 Incident Summary
+[2-3 sentences. What happened, what was affected, severity and duration]
+
+## 🔍 Root Cause Analysis
+[2-3 sentences. Most likely root cause based on the incident details and response actions]
+
+## 💥 Business Impact
+[2-3 sentences. Customer impact, financial exposure, regulatory considerations]
+
+## 🛠 Response Timeline
+[Bullet list of key response actions taken, in chronological order, based on the chat history]
+
+## ✅ Action Items
+[5 concrete action items to prevent recurrence, each with an owner role e.g. "Platform Engineering", "Vendor Management"]
+
+## 📊 Metrics
+- Detection Time: [estimate based on context]
+- Response Time: [time from ${incident.startTime} to now]
+- Severity: ${incident.severity}
+- Systems Affected: ${incident.system || 'Unspecified'}`
+        }
+      ]
+    })
+  });
+
+  const data = await response.json();
+  if (data.error) throw new Error(data.error.message);
+  return data.content[0].text;
+}
