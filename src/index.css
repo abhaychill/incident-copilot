@@ -603,3 +603,40 @@ h1, h2, h3 {
 .report-content li {
   margin-bottom: 4px;
 }
+.app-sev1 {
+  border-top: 3px solid #ef4444;
+}
+
+.app-sev2 {
+  border-top: 3px solid #f97316;
+}
+
+.app-sev3 {
+  border-top: 3px solid #22c55e;
+}
+
+.panels-sev1 .panel {
+  border-color: #ef444440;
+}
+
+.panels-sev2 .panel {
+  border-color: #f9731640;
+}
+
+.panels-sev1 .status-bar {
+  border-color: #ef4444;
+  background-color: #1a0f0f;
+}
+
+.panels-sev2 .status-bar {
+  border-color: #f97316;
+  background-color: #1a110a;
+}
+
+.sev1-glow {
+  box-shadow: 0 0 24px #ef444430;
+}
+
+.sev2-glow {
+  box-shadow: 0 0 24px #f9731630;
+}

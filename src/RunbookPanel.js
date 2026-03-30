@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { chatWithRunbook } from './api';
 
@@ -8,7 +8,7 @@ function RunbookPanel({ incident, apiKey, runbookText, onChatUpdate }) {
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef(null);
 
-  const updateMessages = React.useCallback((newMessages) => {
+  const updateMessages = useCallback((newMessages) => {
     setMessages(newMessages);
     if (onChatUpdate) onChatUpdate(newMessages);
   }, [onChatUpdate]);
@@ -27,7 +27,7 @@ function RunbookPanel({ incident, apiKey, runbookText, onChatUpdate }) {
       })
       .catch(err => updateMessages([{ role: 'assistant', content: `Error: ${err.message}` }]))
       .finally(() => setLoading(false));
-  }, [incident, apiKey, runbookText]);
+  }, [incident, apiKey, runbookText, updateMessages]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
