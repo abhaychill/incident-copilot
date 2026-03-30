@@ -8,10 +8,10 @@ function RunbookPanel({ incident, apiKey, runbookText, onChatUpdate }) {
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef(null);
 
-  const updateMessages = (newMessages) => {
+  const updateMessages = React.useCallback((newMessages) => {
     setMessages(newMessages);
     if (onChatUpdate) onChatUpdate(newMessages);
-  };
+  }, [onChatUpdate]);
 
   useEffect(() => {
     if (!incident) return;
