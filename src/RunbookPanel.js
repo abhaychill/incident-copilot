@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { chatWithRunbook } from './api';
 
-function RunbookPanel({ incident }) {
+function RunbookPanel({ incident, apiKey, runbookText }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -13,14 +13,14 @@ function RunbookPanel({ incident }) {
     setMessages([]);
     setLoading(true);
     const initial = [{ role: 'user', content: 'The incident has just been logged. What are the first steps I should take right now?' }];
-    chatWithRunbook(incident, initial)
+    chatWithRunbook(incident, initial, apiKey, runbookText)
       .then(text => {
         setMessages([
           { role: 'user', content: 'The incident has just been logged. What are the first steps I should take right now?' },
           { role: 'assistant', content: text }
         ]);
       })
-      .catch(() => setMessages([{ role: 'assistant', content: 'Error connecting to AI. Check your API key.' }]))
+      .catch(err => setMessages([{ role: 'assistant', content: `Error: ${err.message}` }]))
       .finally(() => setLoading(false));
   }, [incident]);
 
@@ -36,10 +36,10 @@ function RunbookPanel({ incident }) {
     setInput('');
     setLoading(true);
     try {
-      const reply = await chatWithRunbook(incident, updated);
+      const reply = await chatWithRunbook(incident, updated, apiKey, runbookText);
       setMessages([...updated, { role: 'assistant', content: reply }]);
-    } catch {
-      setMessages([...updated, { role: 'assistant', content: 'Error getting response.' }]);
+    } catch (err) {
+      setMessages([...updated, { role: 'assistant', content: `Error: ${err.message}` }]);
     } finally {
       setLoading(false);
     }
@@ -50,6 +50,7 @@ function RunbookPanel({ incident }) {
       <div className="panel-header">
         <span className="panel-icon">📋</span>
         <h2>Runbook Assistant</h2>
+        {runbookText && <span className="badge badge-green" style={{fontSize:'10px'}}>RAG ON</span>}
       </div>
       <div className="panel-body">
         {!incident && (

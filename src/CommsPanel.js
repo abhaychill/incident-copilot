@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { generateComms } from './api';
 
-function CommsPanel({ incident }) {
+function CommsPanel({ incident, apiKey }) {
   const [comms, setComms] = useState('');
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(null);
@@ -11,9 +11,9 @@ function CommsPanel({ incident }) {
     if (!incident) return;
     setComms('');
     setLoading(true);
-    generateComms(incident)
+    generateComms(incident, apiKey)
       .then(text => setComms(text))
-      .catch(() => setComms('Error generating communications. Check your API key.'))
+      .catch(err => setComms(`Error: ${err.message}`))
       .finally(() => setLoading(false));
   }, [incident]);
 
@@ -36,9 +36,7 @@ function CommsPanel({ incident }) {
           </div>
         )}
         {loading && (
-          <div className="empty-state">
-            ✍️ Drafting communications...
-          </div>
+          <div className="empty-state">✍️ Drafting communications...</div>
         )}
         {comms && (
           <div className="comms-output">

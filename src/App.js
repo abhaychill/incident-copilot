@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
+import KeyEntry from './KeyEntry';
 import RunbookPanel from './RunbookPanel';
 import CommsPanel from './CommsPanel';
+import RunbookUpload from './RunbookUpload';
 
 function App() {
+  const [apiKey, setApiKey] = useState('');
   const [incident, setIncident] = useState(null);
+  const [runbookText, setRunbookText] = useState('');
+  const [runbookName, setRunbookName] = useState('');
   const [form, setForm] = useState({
     title: '',
     severity: 'SEV1',
@@ -11,16 +16,28 @@ function App() {
     description: ''
   });
 
+  const handleRunbookLoaded = (text, name) => {
+    setRunbookText(text);
+    setRunbookName(name);
+  };
+
   const handleSubmit = () => {
     if (!form.title || !form.description) return;
     setIncident({ ...form, startTime: new Date().toLocaleTimeString() });
   };
+
+  if (!apiKey) {
+    return <KeyEntry onKeySubmit={setApiKey} />;
+  }
 
   return (
     <div>
       <header className="app-header">
         <h1>⚡ Incident Copilot</h1>
         <span className="badge">AI-POWERED</span>
+        {runbookName && (
+          <span className="badge badge-green">📎 {runbookName}</span>
+        )}
       </header>
 
       <main className="app-body">
@@ -61,15 +78,21 @@ function App() {
             <div className="form-group">
               <label>Description</label>
               <textarea
-                placeholder="Describe what is happening, what you've observed, and any initial findings..."
+                placeholder="Describe what is happening..."
                 value={form.description}
                 onChange={e => setForm({ ...form, description: e.target.value })}
               />
             </div>
           </div>
-          <button className="btn-primary" onClick={handleSubmit}>
-            🚨 Activate Incident Response
-          </button>
+          <div className="form-bottom-row">
+            <button className="btn-primary" onClick={handleSubmit}>
+              🚨 Activate Incident Response
+            </button>
+            <RunbookUpload
+              onRunbookLoaded={handleRunbookLoaded}
+              runbookLoaded={!!runbookText}
+            />
+          </div>
         </div>
 
         {incident && (
@@ -82,12 +105,13 @@ function App() {
             <span>System: {incident.system || 'Unspecified'}</span>
             <span>|</span>
             <span>Started: {incident.startTime}</span>
+            {runbookText && <><span>|</span><span>📎 RAG Active</span></>}
           </div>
         )}
 
         <div className="panels">
-          <RunbookPanel incident={incident} />
-          <CommsPanel incident={incident} />
+          <RunbookPanel incident={incident} apiKey={apiKey} runbookText={runbookText} />
+          <CommsPanel incident={incident} apiKey={apiKey} />
         </div>
       </main>
     </div>
