@@ -1,70 +1,93 @@
-# Getting Started with Create React App
+# ⚡ Incident Copilot
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An AI-powered incident response tool built for financial services and enterprise resilience teams. Combines real-time runbook guidance and multi-audience stakeholder communication generation into a single interface — activated by logging a single incident.
 
-## Available Scripts
+Built with React and the Claude API (Anthropic).
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 🎯 The Problem
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+When a SEV1 incident hits, two things need to happen simultaneously:
+- Engineers need **step-by-step guidance** on how to respond and recover
+- Stakeholders need **clear, audience-appropriate communications** immediately
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Today these happen in silos, manually, under pressure. Incident Copilot unifies both into one AI-driven workflow.
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## ✨ Features
 
-### `npm run build`
+- **Incident Intake Form** — Log an incident with title, severity, affected system, and description
+- **Runbook Assistant** — AI chat that immediately surfaces structured first steps and guides responders interactively through resolution
+- **Communications Generator** — Auto-drafts three tailored communications simultaneously:
+  - 🛠 Technical Team — engineering detail and action items
+  - 👔 Senior Leadership — business impact, no jargon
+  - 🌐 External Clients — professional, calm, customer-facing language
+- **Live Incident Status Bar** — Tracks active incident metadata throughout the session
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🛠 Tech Stack
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+| Layer | Technology |
+|---|---|
+| Frontend | React |
+| AI | Claude API (Anthropic) — claude-opus-4-5 |
+| Styling | Custom CSS |
+| Markdown rendering | react-markdown |
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 🚀 Running Locally
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Prerequisites
+- Node.js
+- An Anthropic API key (get one at console.anthropic.com)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Setup
+```bash
+git clone https://github.com/abhaychill/incident-copilot.git
+cd incident-copilot
+npm install
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Create a `.env` file in the root directory:
+```
+REACT_APP_ANTHROPIC_KEY=your_api_key_here
+```
 
-## Learn More
+Start the app:
+```bash
+npm start
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+## 💡 Use Case Context
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+This project was built to demonstrate how AI can augment **Technology Resilience** workflows in financial services — specifically targeting the gap between incident detection and coordinated response. Potential enterprise extensions include:
 
-### Analyzing the Bundle Size
+- RAG-based retrieval from real internal runbook libraries
+- Integration with PagerDuty, ServiceNow, or Jira for incident ingestion
+- Automated post-incident report generation
+- Slack/Teams notification delivery
+- RTO/RPO breach prediction during active incidents
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+---
 
-### Making a Progressive Web App
+## 📁 Project Structure
+```
+src/
+├── App.js           # Main layout and incident state management
+├── RunbookPanel.js  # AI runbook chat assistant
+├── CommsPanel.js    # AI communications generator
+├── api.js           # Anthropic API calls
+└── index.css        # Styling
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+*Built as a portfolio project exploring AI applications in enterprise technology resilience.*
