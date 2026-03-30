@@ -1,0 +1,95 @@
+import React, { useState, useEffect, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
+import { chatWithRunbook } from './api';
+
+function RunbookPanel({ incident }) {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const bottomRef = useRef(null);
+
+  useEffect(() => {
+    if (!incident) return;
+    setMessages([]);
+    setLoading(true);
+    const initial = [{ role: 'user', content: 'The incident has just been logged. What are the first steps I should take right now?' }];
+    chatWithRunbook(incident, initial)
+      .then(text => {
+        setMessages([
+          { role: 'user', content: 'The incident has just been logged. What are the first steps I should take right now?' },
+          { role: 'assistant', content: text }
+        ]);
+      })
+      .catch(() => setMessages([{ role: 'assistant', content: 'Error connecting to AI. Check your API key.' }]))
+      .finally(() => setLoading(false));
+  }, [incident]);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const sendMessage = async () => {
+    if (!input.trim() || loading) return;
+    const userMsg = { role: 'user', content: input };
+    const updated = [...messages, userMsg];
+    setMessages(updated);
+    setInput('');
+    setLoading(true);
+    try {
+      const reply = await chatWithRunbook(incident, updated);
+      setMessages([...updated, { role: 'assistant', content: reply }]);
+    } catch {
+      setMessages([...updated, { role: 'assistant', content: 'Error getting response.' }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="panel">
+      <div className="panel-header">
+        <span className="panel-icon">📋</span>
+        <h2>Runbook Assistant</h2>
+      </div>
+      <div className="panel-body">
+        {!incident && (
+          <div className="empty-state">
+            Log an incident above to activate<br />the runbook assistant
+          </div>
+        )}
+        {incident && (
+          <>
+            <div className="chat-messages">
+              {messages.map((msg, i) => (
+                <div key={i} className={`chat-bubble ${msg.role}`}>
+                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+                </div>
+              ))}
+              {loading && (
+                <div className="chat-bubble assistant">
+                  <span className="typing">Analyzing...</span>
+                </div>
+              )}
+              <div ref={bottomRef} />
+            </div>
+            <div className="chat-input-row">
+              <input
+                type="text"
+                placeholder="Ask a follow-up question..."
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && sendMessage()}
+                className="chat-input"
+              />
+              <button className="btn-primary" onClick={sendMessage} disabled={loading}>
+                Send
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default RunbookPanel;
