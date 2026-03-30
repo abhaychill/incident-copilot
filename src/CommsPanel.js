@@ -15,7 +15,7 @@ function CommsPanel({ incident, apiKey }) {
       .then(text => setComms(text))
       .catch(err => setComms(`Error: ${err.message}`))
       .finally(() => setLoading(false));
-  }, [incident]);
+}, [incident, apiKey]);
 
   const copySection = (label, text) => {
     navigator.clipboard.writeText(text);

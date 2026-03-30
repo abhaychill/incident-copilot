@@ -22,7 +22,7 @@ function RunbookPanel({ incident, apiKey, runbookText }) {
       })
       .catch(err => setMessages([{ role: 'assistant', content: `Error: ${err.message}` }]))
       .finally(() => setLoading(false));
-  }, [incident]);
+}, [incident, apiKey, runbookText]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
