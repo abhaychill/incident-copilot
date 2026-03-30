@@ -55,7 +55,7 @@ function App() {
   }
 
   return (
-    <div>
+<div className={incident && !resolved ? `app-${incident.severity.toLowerCase()}` : ''}>
       <header className="app-header">
         <h1>⚡ Incident Copilot</h1>
         <span className="badge">AI-POWERED</span>
@@ -146,7 +146,7 @@ function App() {
           </div>
         )}
 
-        <div className="panels">
+       <div className={`panels ${incident && !resolved ? `panels-${incident.severity.toLowerCase()} ${incident.severity === 'SEV1' ? 'sev1-glow' : incident.severity === 'SEV2' ? 'sev2-glow' : ''}` : ''}`}>
           <RunbookPanel
             incident={incident}
             apiKey={apiKey}
