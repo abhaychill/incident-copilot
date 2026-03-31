@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { chatWithRunbook } from './api';
 
-function RunbookPanel({ incident, apiKey, runbookText, onChatUpdate }) {
+function RunbookPanel({ incident, runbookText, onChatUpdate }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,7 +18,7 @@ function RunbookPanel({ incident, apiKey, runbookText, onChatUpdate }) {
     updateMessages([]);
     setLoading(true);
     const initial = [{ role: 'user', content: 'The incident has just been logged. What are the first steps I should take right now?' }];
-    chatWithRunbook(incident, initial, apiKey, runbookText)
+    chatWithRunbook(incident, initial, runbookText)
       .then(text => {
         updateMessages([
           { role: 'user', content: 'The incident has just been logged. What are the first steps I should take right now?' },
@@ -41,7 +41,7 @@ function RunbookPanel({ incident, apiKey, runbookText, onChatUpdate }) {
     setInput('');
     setLoading(true);
     try {
-      const reply = await chatWithRunbook(incident, updated, apiKey, runbookText);
+      const reply = await chatWithRunbook(incident, updated, runbookText);
       updateMessages([...updated, { role: 'assistant', content: reply }]);
     } catch (err) {
       updateMessages([...updated, { role: 'assistant', content: `Error: ${err.message}` }]);

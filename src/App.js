@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import KeyEntry from './KeyEntry';
 import RunbookPanel from './RunbookPanel';
 import CommsPanel from './CommsPanel';
 import RunbookUpload from './RunbookUpload';
@@ -7,7 +6,6 @@ import ReportModal from './ReportModal';
 import { generateReport } from './api';
 
 function App() {
-  const [apiKey, setApiKey] = useState('');
   const [incident, setIncident] = useState(null);
   const [runbookText, setRunbookText] = useState('');
   const [runbookName, setRunbookName] = useState('');
@@ -41,7 +39,7 @@ function App() {
     setShowReport(true);
     setReportLoading(true);
     try {
-      const text = await generateReport(incident, chatHistory, apiKey);
+      const text = await generateReport(incident, chatHistory);
       setReport(text);
     } catch (err) {
       setReport(`Error generating report: ${err.message}`);
@@ -50,12 +48,8 @@ function App() {
     }
   };
 
-  if (!apiKey) {
-    return <KeyEntry onKeySubmit={setApiKey} />;
-  }
-
   return (
-<div className={incident && !resolved ? `app-${incident.severity.toLowerCase()}` : ''}>
+    <div className={incident && !resolved ? `app-${incident.severity.toLowerCase()}` : ''}>
       <header className="app-header">
         <h1>⚡ Incident Copilot</h1>
         <span className="badge">AI-POWERED</span>
@@ -146,14 +140,13 @@ function App() {
           </div>
         )}
 
-       <div className={`panels ${incident && !resolved ? `panels-${incident.severity.toLowerCase()} ${incident.severity === 'SEV1' ? 'sev1-glow' : incident.severity === 'SEV2' ? 'sev2-glow' : ''}` : ''}`}>
+        <div className={`panels ${incident && !resolved ? `panels-${incident.severity.toLowerCase()} ${incident.severity === 'SEV1' ? 'sev1-glow' : incident.severity === 'SEV2' ? 'sev2-glow' : ''}` : ''}`}>
           <RunbookPanel
             incident={incident}
-            apiKey={apiKey}
             runbookText={runbookText}
             onChatUpdate={setChatHistory}
           />
-          <CommsPanel incident={incident} apiKey={apiKey} />
+          <CommsPanel incident={incident} />
         </div>
       </main>
 

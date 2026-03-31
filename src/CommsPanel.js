@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { generateComms } from './api';
 
-function CommsPanel({ incident, apiKey }) {
+function CommsPanel({ incident }) {
   const [comms, setComms] = useState('');
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(null);
@@ -11,11 +11,11 @@ function CommsPanel({ incident, apiKey }) {
     if (!incident) return;
     setComms('');
     setLoading(true);
-    generateComms(incident, apiKey)
+    generateComms(incident)
       .then(text => setComms(text))
       .catch(err => setComms(`Error: ${err.message}`))
       .finally(() => setLoading(false));
-}, [incident, apiKey]);
+}, [incident]);
 
   const copySection = (label, text) => {
     navigator.clipboard.writeText(text);
