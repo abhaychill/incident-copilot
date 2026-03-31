@@ -27,7 +27,7 @@ function RunbookPanel({ incident, runbookText, onChatUpdate }) {
       })
       .catch(err => updateMessages([{ role: 'assistant', content: `Error: ${err.message}` }]))
       .finally(() => setLoading(false));
-  }, [incident, apiKey, runbookText, updateMessages]);
+}, [incident, runbookText, updateMessages]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
